@@ -1,18 +1,30 @@
-class Circle{
+class Screen{
+  
+}
+
+
+interface ScreenParts{
+}
+
+
+
+
+class Rect{
   float x,y;
-  int size = 50;
-  Circle(float x,float y){
+  int w,h;
+  Rect(float x,float y,int w,int h){
     this.x = x;
     this.y = y;
+    this.w = w;
+    this.h = h;
+  }
+  boolean isHit(Rect other){
+    boolean direction_x = (other.x <= x + w)&&(x <= other.x + other.w);
+    boolean direction_y = (other.y <= y + h)&&(y <= other.y + other.h);
+    return direction_x && direction_y;
   }
   void display(){
-    ellipse(x,y,size,size);
-  }
-  boolean isHit(Circle other){
-    if(dist(x,y,other.x,other.y) < size + other.size){
-      return false;
-    }
-    return true;
+    rect(x,y,w,h);
   }
 }
 
