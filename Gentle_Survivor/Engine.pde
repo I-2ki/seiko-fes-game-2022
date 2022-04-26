@@ -20,7 +20,6 @@ class Rect{
     return ((this.x < x)&&(x < this.x + this.w)&&(this.y < y)&&(y < this.y + this.h));
   }
   void display(){
-    fill(255);
     rect(x,y,w,h,roundCorner);
   }
 }
@@ -93,13 +92,6 @@ class Button implements UI{
   }
   void onClick(){ 
   }
-  void hover(){
-    if(collision.isPointInside(mouseX,mouseY)){
-      cursor(HAND);
-    }else{
-      cursor(ARROW);
-    }
-  }
   void display(){
     fill(7,179,53);
     drawButtonBody();
@@ -114,31 +106,61 @@ class Button implements UI{
   void drawButtonBody(){
     rect(collision.x,collision.y,collision.w,collision.h,collision.roundCorner);
   }
+  boolean isHover(){
+    return collision.isPointInside(mouseX,mouseY);
+  }
+  void hover(){
+    cursor(HAND);
+  }
+  void unHover(){
+    cursor(ARROW);
+  }
   boolean isClicked(){
-    return (collision.isPointInside(mouseX,mouseY) && mousePressed);
+    return mousePressed;
   }
   void update(){
     display();
-    hover();
-    if(isClicked()){
-      onClick();
+    if(isHover()){
+      hover();
+      if(isClicked()){
+        onClick();
+      }
+    }else{
+      unHover();
     }
   }
 }
 
 class Cursor{
-  Circle collision;
+  boolean click = false;
+  Rect collision;
+  color displayColor = color(255,241,0,100);
+  final int moveSpead = 5;
   Cursor(int initalX,int initalY){
-    collision = new Circle(initalX,initalY,50);
+    collision = new Rect(initalX,initalY,30,30);
   }
   void display(){
-    fill(255,241,0,100);
+    fill(displayColor);
     collision.display();
   }
   void update(){
     display();
     if(isPut("left")){
-      collision.x --;
+      collision.x -= moveSpead;
+    }
+    if(isPut("right")){
+      collision.x += moveSpead;
+    }
+    if(isPut("up")){
+      collision.y -= moveSpead;
+    }
+    if(isPut("down")){
+      collision.y += moveSpead;
+    }
+    if(isPut("z")){
+      click = true;
+    }else{
+      click = false;
     }
   }
 }
