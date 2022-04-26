@@ -1,61 +1,50 @@
-class Game{
-  GameState gameState = new Load();
-  Assets assets = new Assets();
-  Game(){
-  }
-  void changeState(GameState gameState){
-    this.gameState = gameState;
-    this.gameState.start();
-  }
-  void update(){
-    gameState.update();
-  }
-}
-Game game = new Game();
-
 void setup(){
   size(1000,600);
+  PFont font = createFont("HGPｺﾞｼｯｸM",50);
+  textFont(font);
+  noStroke();
 }
 
 void draw(){
-  background(0);
+  background(255);
   game.update();
-}
-
-class Assets{
-  HashMap<String,PImage> loadedImageList = new HashMap<String,PImage>();
-  Assets(){
-  }
-  void loadAs(String imageName,String path){
-    PImage image = loadImage(path);
-    loadedImageList.put(imageName,image);
-  }
-  PImage getImage(String imageName){
-     return loadedImageList.get(imageName);
-  }
-}
-
-interface GameState{
-  void start();
-  void update();
 }
 
 class Load implements GameState{
   void start(){
+    game.assets.loadAs("kirby","kirby.png");
   }
   void update(){
-    game.assets.loadAs("kirby","kirby.png");
     game.changeState(new Title());
   }
 }
 
 class Title implements GameState{
   void start(){
+    class StartButton extends Button{
+      StartButton(String labelText,float x,float y,int w,int h,int roundCorner){
+        super(labelText,x,y,w,h,roundCorner);
+      }
+      void display(){
+        fill(180,0,0);
+        super.display();
+      }
+    }
+    game.ui.create("Button",new StartButton("ABCDEFG",10,10,500,50,5));
   }
   void update(){
-    
   }
 }
+
+class MainGame implements GameState{
+  void start(){
+  }
+  void update(){
+  }
+}
+
+
+
 
 class Status{
   float maxHealth,recovery;
@@ -72,7 +61,4 @@ class Chara{
   }
   void update(){
   }
-}
-
-class Weapon{
 }
