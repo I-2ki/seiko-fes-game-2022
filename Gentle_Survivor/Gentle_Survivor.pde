@@ -58,6 +58,34 @@ class Game{
       }
       textSize(30);
       centerText("何かボタンを押してね",600);
+      if(keyPressed){
+        changeState(new Setting());
+      }
+    }
+  }
+  
+  class Setting implements GameState{   
+    class StartButton extends CursorButton{
+      StartButton(String labelText,float x,float y,int w,int h,int roundCorner){
+        super(labelText,x,y,w,h,roundCorner);
+      }
+      StartButton(String labelText,float x,float y,int w,int h){
+        this(labelText,x,y,w,h,0);
+      }
+      void onClick(){
+        changeState(new CharaSelect());
+      }
+    }
+    void start(){
+    }
+    void update(){
+    }
+  }
+  
+  class CharaSelect implements GameState{
+    void start(){
+    }
+    void update(){
     }
   }
   
