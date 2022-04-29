@@ -113,16 +113,14 @@ interface ClickMethod{
 
 class Button implements ClickMethod{
   Rect collision;
-  String labelText;
   boolean isSelected;
   ClickMethod callBackMethod;
-  Button(String labelText,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
+  Button(float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
     collision = new Rect(x,y,w,h,roundCorner);
-    this.labelText = labelText;
     this.callBackMethod = callBackMethod;
   }
-  Button(String labelText,float x,float y,int w,int h,ClickMethod callBackMethod){
-    this(labelText,x,y,w,h,0,callBackMethod);
+  Button(float x,float y,int w,int h,ClickMethod callBackMethod){
+    this(x,y,w,h,0,callBackMethod);
   }
   void onClick(){
     callBackMethod.onClick();
@@ -130,13 +128,6 @@ class Button implements ClickMethod{
   void display(){
     fill(7,179,53);
     drawButtonBody();
-    fill(255);  
-    drawButtonText();
-  }
-  void drawButtonText(){
-    float fontSize = collision.h*0.8;
-    textSize(fontSize);
-    text(labelText,collision.x + collision.w/2 - textWidth(labelText)/2,collision.y + fontSize);
   }
   void drawButtonBody(){
     if(isSelected){
@@ -158,31 +149,37 @@ class Button implements ClickMethod{
   }
 }
 
-class ImageButton extends Button{
-  float textX,textY;
-  Rect buttonRect,imageRect;
-  PImage image;
-  ImageButton(Rect buttonRect,PImage image,Rect imageRect,String labelText,float textX,float  textY,ClickMethod method){
-    super(labelText,buttonRect.x,buttonRect.y,buttonRect.w,buttonRect.h,method);
-    this.textX = textX;
-    this.textY = textY;
-    this.buttonRect = buttonRect;
-    this.image = image;
-    this.imageRect = imageRect;
+class TextButton extends Button{
+  String labelText;
+  TextButton(String labelText,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
+    super(x,y,w,h,roundCorner,callBackMethod);
+    this.labelText = labelText;
   }
-  void display(){
-    fill(156,156,156);
-    drawButtonBody();
-    fill(255);
-    drawButtonText();
-    drawButtonImage();
+  TextButton(String labelText,float x,float y,int w,int h,ClickMethod callBackMethod){
+    this(labelText,x,y,w,h,0,callBackMethod);
   }
   void drawButtonText(){
     float fontSize = collision.h*0.8;
     textSize(fontSize);
-    text(labelText,buttonRect.x + textX,buttonRect.y + textY + fontSize);
+    text(labelText,collision.x + collision.w/2 - textWidth(labelText)/2,collision.y + fontSize);
+  }
+}
+
+class ImageButton extends Button{
+  PImage image;
+  ImageButton(PImage image,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
+    super(x,y,w,h,roundCorner,callBackMethod);
+    this.image = image;
+  }
+  ImageButton(PImage image,float x,float y,int w,int h,ClickMethod callBackMethod){
+    this(image,x,y,w,h,0,callBackMethod);
+  }
+  void display(){
+    fill(156,156,156);
+    drawButtonBody();
+    drawButtonImage();
   }
   void drawButtonImage(){
-    image(image,buttonRect.x + imageRect.x,buttonRect.y + imageRect.y,imageRect.w,imageRect.h);
+    image(image,collision.x,collision.y + collision.y,collision.w,collision.h);
   }
 }

@@ -1,6 +1,5 @@
 class Game{
-  GameState gameState = new Load();
-  Assets assets = new Assets();
+  GameState gameState = new Title();
   Game(){
   }
   void changeState(GameState gameState){
@@ -10,18 +9,6 @@ class Game{
   void update(){
     gameState.update();
     keyBordUpdate();
-  }
-  
-  class Load implements GameState{
-    boolean isLoded = false;
-    void start(){
-      assets.loadAs("GentlePenguin","GentlePenguin.png");
-    }
-    void update(){
-      if(assets.getImage("GentlePenguin") != null){
-        changeState(new Title());
-      }
-    }
   }
   
   class Title implements GameState{
@@ -44,8 +31,8 @@ class Game{
   class Setting implements GameState{
     ButtonManager buttons = new ButtonManager();
     void start(){
-      buttons.create("toExplain",new Button("ゲーム説明",width/2 - 250,400,500,50,5,() -> { changeState(new Explain()); }));
-      buttons.create("toCharaSelect",new Button("ゲームスタート",width/2 - 250,600,500,50,5,() -> { changeState(new CharaSelect()); }));
+      buttons.create("toExplain",new TextButton("ゲーム説明",width/2 - 250,400,500,50,5,() -> { changeState(new Explain()); }));
+      buttons.create("toCharaSelect",new TextButton("ゲームスタート",width/2 - 250,600,500,50,5,() -> { changeState(new CharaSelect()); }));
     }
     void update(){
       buttons.update();
@@ -55,7 +42,7 @@ class Game{
   class CharaSelect implements GameState{
     ButtonManager buttons = new ButtonManager();
     void start(){
-      buttons.create("GentlePenguin",new ImageButton(new Rect(100,100,500,100),assets.getImage("GentlePenguin"),new Rect(50,50,100,100),"ジェントルペンギン",600,100,() -> {
+      buttons.create("GentlePenguin",new ImageButton(assets.getImage("GentlePenguin"),100,100,100,100,() -> {
         changeState(new MainGame());
       }));
     }
@@ -67,7 +54,7 @@ class Game{
   class Explain implements GameState{
     ButtonManager buttons = new ButtonManager();
     void start(){
-      buttons.create("back",new Button("戻る",800,100,100,40,5,(() -> {
+      buttons.create("back",new TextButton("戻る",800,100,100,40,5,(() -> {
         changeState(new Setting());
       })));
     }
@@ -90,6 +77,7 @@ class Game{
   }
 }
 Game game;
+Assets assets = new Assets();
 
 void setup(){
   size(1000,800);
@@ -97,6 +85,7 @@ void setup(){
   textFont(font);
   noStroke();
   game = new Game();
+  assets.loadAs("GentlePenguin","GentlePenguin.png");
 }
 
 void draw(){
