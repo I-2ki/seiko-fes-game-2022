@@ -1,27 +1,10 @@
 class Game{
   GameState gameState = new Load();
   Assets assets = new Assets();
-  UIManager ui = new UIManager();
-  Cursor cursor = new Cursor(width/2,height/2);
   
-  class CursorButton extends Button{
-    CursorButton(String labelText,float x,float y,int w,int h,int roundCorner){
-      super(labelText,x,y,w,h,roundCorner);
-    }
-    CursorButton(String labelText,float x,float y,int w,int h){
-      this(labelText,x,y,w,h,0);
-    }
-    boolean isHover(){
-      return collision.isHitRect(cursor.collision);
-    }
-    void hover(){
-      cursor.displayColor = color(117, 8, 0);
-    }
-    void unHover(){
-      cursor.displayColor = color(255,241,0,100);
-    }
-    boolean isClicked(){
-      return cursor.click;
+  class NeutralButton extends Button{
+    NeutralButton(String labelText,float x,float y,int w,int h){
+      super(labelText,x,y,w,h,10);
     }
   }
   
@@ -33,9 +16,7 @@ class Game{
   }
   void update(){
     gameState.update();
-    ui.update();
     keyBordUpdate();
-    cursor.update();
   }
   
   class Load implements GameState{
@@ -64,25 +45,43 @@ class Game{
     }
   }
   
-  class Setting implements GameState{   
-    class StartButton extends CursorButton{
-      StartButton(String labelText,float x,float y,int w,int h,int roundCorner){
-        super(labelText,x,y,w,h,roundCorner);
-      }
+  class Setting implements GameState{
+    ButtonManager buttons = new ButtonManager();
+    
+    class StartButton extends NeutralButton{
       StartButton(String labelText,float x,float y,int w,int h){
-        this(labelText,x,y,w,h,0);
+        super(labelText,x,y,w,h);
       }
       void onClick(){
         changeState(new CharaSelect());
       }
     }
+    
+    class ExplainButton extends NeutralButton{
+      ExplainButton(String labelText,float x,float y,int w,int h){
+        super(labelText,x,y,w,h);
+      }
+      void onClick(){
+        changeState(new Explain());
+      }
+    }
+    void start(){
+      buttons.create("Explain",new ExplainButton("説明",width / 2 - 150,200,300,100));
+      buttons.create("StartButton",new StartButton("ゲームスタート",width / 2 - 300,500,600,100));
+    }
+    void update(){
+      buttons.update();
+    }
+  }
+  
+  class CharaSelect implements GameState{
     void start(){
     }
     void update(){
     }
   }
   
-  class CharaSelect implements GameState{
+  class Explain implements GameState{
     void start(){
     }
     void update(){

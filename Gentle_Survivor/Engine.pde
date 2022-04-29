@@ -58,31 +58,57 @@ class Assets{
   }
 }
 
-interface UI{
-  void update();
-}
-
-class UIManager{
-  HashMap<String,UI> uiList = new HashMap<String,UI>();
-  UIManager(){
+class ButtonManager{
+  HashMap<String,Button> buttonList = new HashMap<String,Button>();
+  int selectedIndex = 0;
+  ButtonManager(){
   }
-  void create(String id,UI ui){
-    uiList.put(id,ui);
+  void create(String id,Button button){
+    buttonList.put(id,button);
   }
   void delete(String id){
-    uiList.remove(id);
+    buttonList.remove(id);
   }
   void update(){
-    for(String key:uiList.keySet()){
-      UI ui = uiList.get(key);
-      ui.update();
+    moveSelect();
+    int count = 0;
+    for(String key : buttonList.keySet()){
+      Button button = buttonList.get(key);
+      button.update();
+      if(selectedIndex == count){
+        button.isSelected = true; 
+      }else{
+        button.isSelected = false;
+      }
+      count++;
+    }
+  }
+  void moveSelect(){
+    if(isPutOnce("left")){
+      selectedIndex--;
+    }
+    if(isPutOnce("right")){
+      selectedIndex++;
+    }
+    if(isPutOnce("up")){
+      selectedIndex--;
+    }
+    if(isPutOnce("down")){
+      selectedIndex++;
+    }
+    if(selectedIndex < 0){
+      selectedIndex = 0;
+    }
+    if(buttonList.size() - 1 < selectedIndex){
+      selectedIndex = buttonList.size() - 1;
     }
   }
 }
 
-class Button implements UI{
+class Button{
   Rect collision;
   String labelText;
+  boolean isSelected;
   Button(String labelText,float x,float y,int w,int h,int roundCorner){
     collision = new Rect(x,y,w,h,roundCorner);
     this.labelText = labelText;
@@ -104,63 +130,21 @@ class Button implements UI{
     text(labelText,collision.x + collision.w/2 - textWidth(labelText)/2,collision.y + fontSize);
   }
   void drawButtonBody(){
+    if(isSelected){
+      stroke(255,255,0);
+      strokeWeight(5);
+    }else{
+      noStroke();
+    }
     rect(collision.x,collision.y,collision.w,collision.h,collision.roundCorner);
   }
-  boolean isHover(){
-    return collision.isPointInside(mouseX,mouseY);
-  }
-  void hover(){
-    cursor(HAND);
-  }
-  void unHover(){
-    cursor(ARROW);
-  }
   boolean isClicked(){
-    return mousePressed;
+    return isPutOnce("z");
   }
   void update(){
     display();
-    if(isHover()){
-      hover();
-      if(isClicked()){
-        onClick();
-      }
-    }else{
-      unHover();
-    }
-  }
-}
-
-class Cursor{
-  boolean click = false;
-  Rect collision;
-  color displayColor = color(255,241,0,100);
-  final int moveSpead = 5;
-  Cursor(int initalX,int initalY){
-    collision = new Rect(initalX,initalY,30,30);
-  }
-  void display(){
-    fill(displayColor);
-    collision.display();
-  }
-  void update(){
-    display();
-    if(isPut("left")){
-      collision.x -= moveSpead;
-    }
-    if(isPut("right")){
-      collision.x += moveSpead;
-    }
-    if(isPut("up")){
-      collision.y -= moveSpead;
-    }
-    if(isPut("down")){
-      collision.y += moveSpead;
-    }
-    if(isPut("z")){
-      click = true;
-    }else{
-      click = false;
+    if(isSelected && isClicked()){
+      onClick();
     }
   }
 }
