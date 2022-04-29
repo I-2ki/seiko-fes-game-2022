@@ -157,7 +157,9 @@ class ImageButton extends Button{
     super(labelText,buttonRect.x,buttonRect.y,buttonRect.w,buttonRect.h);
     this.textX = textX;
     this.textY = textY;
-    this.buttonRect
+    this.buttonRect = buttonRect;
+    this.image = image;
+    this.imageRect = imageRect;
   }
   void display(){
     fill(156,156,156);
@@ -172,8 +174,6 @@ class ImageButton extends Button{
     text(labelText,textX,textY + fontSize);
   }
   void drawButtonImage(){
-    image(iamge,imageRect.x,imageRect.y,imageRect.w,imageRect.h);
-  }
-  void drawButtonBody(){
+    image(image,imageRect.x,imageRect.y,imageRect.w,imageRect.h);
   }
 }

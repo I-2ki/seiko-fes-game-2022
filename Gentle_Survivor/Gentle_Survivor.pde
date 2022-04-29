@@ -75,6 +75,10 @@ class Game{
   }
   
   class CharaSelect implements GameState{
+    class GenPeButton extends ImageButton{
+      GenPeButton(){
+      }
+    }
     void start(){
     }
     void update(){
