@@ -148,3 +148,32 @@ class Button{
     }
   }
 }
+
+class ImageButton extends Button{
+  float textX,textY;
+  Rect buttonRect,imageRect;
+  PImage image;
+  ImageButton(Rect buttonRect,PImage image,Rect imageRect,String labelText,float textX,float  textY){
+    super(labelText,buttonRect.x,buttonRect.y,buttonRect.w,buttonRect.h);
+    this.textX = textX;
+    this.textY = textY;
+    this.buttonRect
+  }
+  void display(){
+    fill(156,156,156);
+    drawButtonBody();
+    fill(255);
+    drawButtonText();
+    drawButtonImage();
+  }
+  void drawButtonText(){
+    float fontSize = collision.h*0.8;
+    textSize(fontSize);
+    text(labelText,textX,textY + fontSize);
+  }
+  void drawButtonImage(){
+    image(iamge,imageRect.x,imageRect.y,imageRect.w,imageRect.h);
+  }
+  void drawButtonBody(){
+  }
+}

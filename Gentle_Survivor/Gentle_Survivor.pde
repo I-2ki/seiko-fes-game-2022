@@ -78,6 +78,7 @@ class Game{
     void start(){
     }
     void update(){
+      
     }
   }
   
@@ -85,10 +86,15 @@ class Game{
     void start(){
     }
     void update(){
+      textSize(20);
+      fill(255);
+      text("このゲームは、5分間敵から生き残るゲームです。\n敵は時間が経つごとにどんどん強くなります。",0,100);
     }
   }
   
   class MainGame implements GameState{
+    MainGame(){
+    }
     void start(){
     }
     void update(){
