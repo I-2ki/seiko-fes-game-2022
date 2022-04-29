@@ -62,6 +62,7 @@ class Game{
     class Player{
       Circle collision = new Circle(width/2,height/2,30);
       PImage image = assets.getImage("Player");
+      int HP = 100;
       Player(){
       }
       void display(){
@@ -82,6 +83,7 @@ class Game{
         if(isPut("down")){
           collision.y += camera.moveSpeed;
         }
+        println(HP);
       }
     }
     Player player = new Player();
@@ -89,6 +91,8 @@ class Game{
     class Enemy{
       Circle collision;
       PImage image;
+      int damageCoolDown = 0;
+      int damagedCoolDown = 0;
       float speed = 1;
       Enemy(PImage image,float x,float y,int size){
         collision = new Circle(x,y,size);
@@ -100,6 +104,13 @@ class Game{
       void update(){
         collision.x -= getMoveVectorX();
         collision.y -= getMoveVectorY();
+        
+        if(collision.isHit(player.collision) && damageCoolDown <= 0){
+          player.HP--;
+          damageCoolDown = 5;
+        }else{
+          damageCoolDown--;
+        }
       }
       float getMoveVectorX(){
         float dx = collision.x - player.collision.x;
@@ -139,6 +150,7 @@ Assets assets = new Assets();
 
 void setup(){
   size(1000,800);
+  frameRate(60);
   PFont font = createFont("HGPｺﾞｼｯｸM",50);
   textFont(font);
   noStroke();
