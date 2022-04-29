@@ -1,13 +1,6 @@
 class Game{
   GameState gameState = new Load();
   Assets assets = new Assets();
-  
-  class NeutralButton extends Button{
-    NeutralButton(String labelText,float x,float y,int w,int h){
-      super(labelText,x,y,w,h,10);
-    }
-  }
-  
   Game(){
   }
   void changeState(GameState gameState){
@@ -20,11 +13,14 @@ class Game{
   }
   
   class Load implements GameState{
+    boolean isLoded = false;
     void start(){
-      assets.loadAs("kirby","kirby.png");
+      assets.loadAs("GentlePenguin","GentlePenguin.png");
     }
     void update(){
-      changeState(new Title());
+      if(assets.getImage("GentlePenguin") != null){
+        changeState(new Title());
+      }
     }
   }
   
@@ -47,27 +43,9 @@ class Game{
   
   class Setting implements GameState{
     ButtonManager buttons = new ButtonManager();
-    
-    class StartButton extends NeutralButton{
-      StartButton(String labelText,float x,float y,int w,int h){
-        super(labelText,x,y,w,h);
-      }
-      void onClick(){
-        changeState(new CharaSelect());
-      }
-    }
-    
-    class ExplainButton extends NeutralButton{
-      ExplainButton(String labelText,float x,float y,int w,int h){
-        super(labelText,x,y,w,h);
-      }
-      void onClick(){
-        changeState(new Explain());
-      }
-    }
     void start(){
-      buttons.create("Explain",new ExplainButton("説明",width / 2 - 150,200,300,100));
-      buttons.create("StartButton",new StartButton("ゲームスタート",width / 2 - 300,500,600,100));
+      buttons.create("toExplain",new Button("ゲーム説明",width/2 - 250,400,500,50,5,() -> { changeState(new Explain()); }));
+      buttons.create("toCharaSelect",new Button("ゲームスタート",width/2 - 250,600,500,50,5,() -> { changeState(new CharaSelect()); }));
     }
     void update(){
       buttons.update();
@@ -75,27 +53,30 @@ class Game{
   }
   
   class CharaSelect implements GameState{
-    class GenPeButton extends ImageButton{
-      GenPeButton(){
-        
-      }
-    }
+    ButtonManager buttons = new ButtonManager();
     void start(){
+      buttons.create("GentlePenguin",new ImageButton(new Rect(100,100,500,100),assets.getImage("GentlePenguin"),new Rect(50,50,100,100),"ジェントルペンギン",600,100,() -> {
+        changeState(new MainGame());
+      }));
     }
     void update(){
-      
+      buttons.update();
     }
   }
   
   class Explain implements GameState{
-    class backButton ex{
-    }
+    ButtonManager buttons = new ButtonManager();
     void start(){
+      buttons.create("back",new Button("戻る",800,100,100,40,5,(() -> {
+        changeState(new Setting());
+      })));
     }
     void update(){
+      buttons.update();
+      
       textSize(20);
       fill(255);
-      text("このゲームは、5分間敵から生き残るゲームです。\n敵は時間が経つごとにどんどん強くなります。",0,100);
+      text("このゲームは、5分間敵から生き残るゲームです。\n敵は時間が経つごとにどんどん強くなります。",50,100);
     }
   }
   
