@@ -112,15 +112,17 @@ interface ClickMethod{
 }
 
 class Button implements ClickMethod{
-  Rect collision;
   boolean isSelected;
+  String labelText;
+  Rect collision;
   ClickMethod callBackMethod;
-  Button(float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
+  Button(String labelText,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
     collision = new Rect(x,y,w,h,roundCorner);
     this.callBackMethod = callBackMethod;
+    this.labelText = labelText;
   }
-  Button(float x,float y,int w,int h,ClickMethod callBackMethod){
-    this(x,y,w,h,0,callBackMethod);
+  Button(String labelText,float x,float y,int w,int h,ClickMethod callBackMethod){
+    this(labelText,x,y,w,h,0,callBackMethod);
   }
   void onClick(){
     callBackMethod.onClick();
@@ -128,6 +130,13 @@ class Button implements ClickMethod{
   void display(){
     fill(7,179,53);
     drawButtonBody();
+    fill(255);
+    drawButtonText();
+  }
+  void drawButtonText(){
+    float fontSize = collision.h*0.8;
+    textSize(fontSize);
+    text(labelText,collision.x + collision.w/2 - textWidth(labelText)/2,collision.y + fontSize);
   }
   void drawButtonBody(){
     if(isSelected){
@@ -149,37 +158,54 @@ class Button implements ClickMethod{
   }
 }
 
-class TextButton extends Button{
-  String labelText;
-  TextButton(String labelText,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
-    super(x,y,w,h,roundCorner,callBackMethod);
-    this.labelText = labelText;
+class Timer{
+  int baseTime;
+  Timer(){
+    baseTime = millis();
   }
-  TextButton(String labelText,float x,float y,int w,int h,ClickMethod callBackMethod){
-    this(labelText,x,y,w,h,0,callBackMethod);
+  void display(){
+    textSize(30);
+    fill(255);
+    centerText(getMinute()+":"+getSecond(),50);
   }
-  void drawButtonText(){
-    float fontSize = collision.h*0.8;
-    textSize(fontSize);
-    text(labelText,collision.x + collision.w/2 - textWidth(labelText)/2,collision.y + fontSize);
+  void countRestart(){
+    baseTime = millis();
+  }
+  int getSecond(){
+    return ((millis() - baseTime)/1000)%60;
+  }
+  int getMinute(){
+    return ((millis() - baseTime)/1000/60)%60;
   }
 }
 
-class ImageButton extends Button{
-  PImage image;
-  ImageButton(PImage image,float x,float y,int w,int h,int roundCorner,ClickMethod callBackMethod){
-    super(x,y,w,h,roundCorner,callBackMethod);
-    this.image = image;
+class Camera{
+  float topLeftX = 0;
+  float topLeftY = 0;
+  float moveSpeed = 5;
+  Camera(){
   }
-  ImageButton(PImage image,float x,float y,int w,int h,ClickMethod callBackMethod){
-    this(image,x,y,w,h,0,callBackMethod);
+  void drawRect(float x,float y,int w,int h){
+    rect(topLeftX + x,topLeftY + y,w,h);
   }
-  void display(){
-    fill(156,156,156);
-    drawButtonBody();
-    drawButtonImage();
+  void drawCircle(float x,float y,int size){
+    ellipse(topLeftX + x,topLeftY + y,size,size);
   }
-  void drawButtonImage(){
-    image(image,collision.x,collision.y + collision.y,collision.w,collision.h);
+  void drawImage(PImage image,float x,float y,int w,int h){
+    image(image,topLeftX + x,topLeftY + y,w,h);
+  }
+  void moveCamera(){
+    if(isPut("left")){
+      topLeftX += moveSpeed;
+    }
+    if(isPut("right")){
+      topLeftX -= moveSpeed;
+    }
+    if(isPut("up")){
+      topLeftY += moveSpeed;
+    }
+    if(isPut("down")){
+      topLeftY -= moveSpeed;
+    }
   }
 }

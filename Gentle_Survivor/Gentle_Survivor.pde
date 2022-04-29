@@ -31,20 +31,8 @@ class Game{
   class Setting implements GameState{
     ButtonManager buttons = new ButtonManager();
     void start(){
-      buttons.create("toExplain",new TextButton("ゲーム説明",width/2 - 250,400,500,50,5,() -> { changeState(new Explain()); }));
-      buttons.create("toCharaSelect",new TextButton("ゲームスタート",width/2 - 250,600,500,50,5,() -> { changeState(new CharaSelect()); }));
-    }
-    void update(){
-      buttons.update();
-    }
-  }
-  
-  class CharaSelect implements GameState{
-    ButtonManager buttons = new ButtonManager();
-    void start(){
-      buttons.create("GentlePenguin",new ImageButton(assets.getImage("GentlePenguin"),100,100,100,100,() -> {
-        changeState(new MainGame());
-      }));
+      buttons.create("toExplain",new Button("ゲーム説明",width/2 - 250,400,500,50,5,() -> { changeState(new Explain()); }));
+      buttons.create("toCharaSelect",new Button("ゲームスタート",width/2 - 250,600,500,50,5,() -> { changeState(new MainGame()); }));
     }
     void update(){
       buttons.update();
@@ -54,7 +42,7 @@ class Game{
   class Explain implements GameState{
     ButtonManager buttons = new ButtonManager();
     void start(){
-      buttons.create("back",new TextButton("戻る",800,100,100,40,5,(() -> {
+      buttons.create("back",new Button("戻る",800,100,100,40,5,(() -> {
         changeState(new Setting());
       })));
     }
@@ -68,11 +56,81 @@ class Game{
   }
   
   class MainGame implements GameState{
+    Timer timer = new Timer();
+    Camera camera = new Camera();
+    
+    class Player{
+      Circle collision = new Circle(width/2,height/2,30);
+      PImage image = assets.getImage("Player");
+      Player(){
+      }
+      void display(){
+        noStroke();
+        fill(255,0,0);
+        camera.drawImage(image,collision.x - 15,collision.y,collision.size,collision.size);
+      }
+      void update(){
+        if(isPut("left")){
+          collision.x -= camera.moveSpeed;
+        }
+        if(isPut("right")){
+          collision.x += camera.moveSpeed;
+        }
+        if(isPut("up")){
+          collision.y -= camera.moveSpeed;
+        }
+        if(isPut("down")){
+          collision.y += camera.moveSpeed;
+        }
+      }
+    }
+    Player player = new Player();
+    
+    class Enemy{
+      Circle collision;
+      PImage image;
+      float speed = 1;
+      Enemy(PImage image,float x,float y,int size){
+        collision = new Circle(x,y,size);
+        this.image = image;
+      }
+      void display(){
+        camera.drawImage(image,collision.x - collision.size/2,collision.y,collision.size,collision.size);
+      }
+      void update(){
+        collision.x -= getMoveVectorX();
+        collision.y -= getMoveVectorY();
+      }
+      float getMoveVectorX(){
+        float dx = collision.x - player.collision.x;
+        float dy = collision.y - player.collision.y;
+        float distance = sqrt(dx*dx+dy*dy);
+        
+        return dx/distance*speed;
+      }
+      float getMoveVectorY(){
+        float dx = collision.x - player.collision.x;
+        float dy = collision.y - player.collision.y;
+        float distance = sqrt(dx*dx+dy*dy);
+        return dy/distance*speed;
+      }
+    }
+    Enemy enemy = new Enemy(assets.getImage("Enemy"),100,30,30);
+    
     MainGame(){
     }
     void start(){
     }
     void update(){
+      player.display();
+      player.update();
+      
+      enemy.display();
+      enemy.update();
+      
+      camera.moveCamera();
+      
+      timer.display();
     }
   }
 }
@@ -85,7 +143,8 @@ void setup(){
   textFont(font);
   noStroke();
   game = new Game();
-  assets.loadAs("GentlePenguin","GentlePenguin.png");
+  assets.loadAs("Player","GentlePenguin.png");
+  assets.loadAs("Enemy","Fish.png");
 }
 
 void draw(){
